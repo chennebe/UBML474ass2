@@ -18,6 +18,30 @@ def ldaLearn(X,y):
     # covmat - A single d x d learnt covariance matrix 
     
     # IMPLEMENT THIS METHOD 
+    
+    tdRows= X.shape[0];
+    tdCols= X.shape[1];
+    #print(tdRows);
+    #print(tdCols);
+
+    #print(X);
+    #print(y);
+    y = y.reshape(y.size);
+    #print(y);
+    uniVals= np.unique(y);
+    #print(uniVals);
+    print(tdCols);
+    print(uniVals.size);
+    means=np.zeros((tdCols,uniVals.size));
+    print(means);
+    for i in range(uniVals.size):
+        #if vals in y = univals then take as part of mean
+        means[:,i]=np.mean(X[y==uniVals[i]],axis=0);
+
+    print(means);
+    #cov x0,x1
+    covmat=np.cov(X,rowvar=0);
+    #print(covmat);
     return means,covmat
 
 def qdaLearn(X,y):
@@ -30,6 +54,29 @@ def qdaLearn(X,y):
     # covmats - A list of k d x d learnt covariance matrices for each of the k classes
     
     # IMPLEMENT THIS METHOD
+    
+    tdRows= X.shape[0];
+    tdCols= X.shape[1];
+    #print(tdRows);
+    #print(tdCols);
+
+    #print(X);
+    #print(y);
+    y = y.reshape(y.size);
+    #print(y);
+    uniVals= np.unique(y);
+    #print(uniVals);
+
+    means=np.zeros((tdCols,uniVals.size));
+    covmats=[np.zeros((tdCols,tdCols))]
+
+    for i in range(uniVals.size):
+        means[:,i]=np.mean(X[y==uniVals[i]],axis=0);
+
+    #print(means);
+
+    #covmats=np.cov(X,rowvar=0);
+    print(covmats);
     return means,covmats
 
 def ldaTest(means,covmat,Xtest,ytest):
@@ -75,6 +122,16 @@ def learnRidgeRegression(X,y,lambd):
     # w = d x 1                                                                
 
     # IMPLEMENT THIS METHOD                                                   
+    
+    X_t = np.transpose(X)
+    I = np.identity(X[0,:].size)
+    lI = I * lambd
+    X_t_X = np.matmul(X_t, X)
+    par = lI + X_t_X
+    left = np.linalg.inv(par)
+    right = np.matmul(X_t, y)
+    w = np.matmul(left, right)
+    
     return w
 
 def testOLERegression(w,Xtest,ytest):
