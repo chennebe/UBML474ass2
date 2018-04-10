@@ -86,7 +86,9 @@ def testOLERegression(w,Xtest,ytest):
     # mse
     
     # IMPLEMENT THIS METHOD
-    return mse
+    rmse = (np.sum(np.square(np.subtract(ytest,np.dot(Xtest, w)))))/ Xtest.shape[0]
+    print(rmse)
+    return rmse
 
 def regressionObjVal(w, X, y, lambd):
 
