@@ -164,6 +164,15 @@ def mapNonLinear(x,p):
     # Xp - (N x (p+1)) 
 	
     # IMPLEMENT THIS METHOD
+    
+    x_t = np.reshape(x, (x.size,1))
+    #print(x_t)
+    Xp = np.repeat(x_t, p+1, 1)
+    for i in range(p+1):
+        Xp[:,i] = np.power(Xp[:,i], i)
+        
+    #print(Xp.shape)
+    
     return Xp
 
 # Main script

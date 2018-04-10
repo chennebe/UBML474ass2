@@ -17,11 +17,13 @@ def mapNonLinear(x,p):
 	
     # IMPLEMENT THIS METHOD
     
-    Xp = np.repeat(x, p+1, 1)
-    for i in range(0, p+1):
+    x_t = np.reshape(x, (x.size,1))
+    #print(x_t)
+    Xp = np.repeat(x_t, p+1, 1)
+    for i in range(p+1):
         Xp[:,i] = np.power(Xp[:,i], i)
         
-    
+    print(Xp.shape)
     return Xp
     
 if sys.version_info.major == 2:
@@ -32,4 +34,5 @@ else:
 x = np.array([[2],
               [3]])
 p = 7
+print(Xtest[:,2])
 print(mapNonLinear(Xtest[:,2],p))
