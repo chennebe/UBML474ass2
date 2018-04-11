@@ -19,29 +19,6 @@ def ldaLearn(X,y):
     
     # IMPLEMENT THIS METHOD 
     
-    tdRows= X.shape[0];
-    tdCols= X.shape[1];
-    #print(tdRows);
-    #print(tdCols);
-
-    #print(X);
-    #print(y);
-    y = y.reshape(y.size);
-    #print(y);
-    uniVals= np.unique(y);
-    #print(uniVals);
-    print(tdCols);
-    print(uniVals.size);
-    means=np.zeros((tdCols,uniVals.size));
-    print(means);
-    for i in range(uniVals.size):
-        #if vals in y = univals then take as part of mean
-        means[:,i]=np.mean(X[y==uniVals[i]],axis=0);
-
-    print(means);
-    #cov x0,x1
-    covmat=np.cov(X,rowvar=0);
-    #print(covmat);
     return means,covmat
 
 def qdaLearn(X,y):
@@ -89,6 +66,15 @@ def ldaTest(means,covmat,Xtest,ytest):
     # ypred - N x 1 column vector indicating the predicted labels
 
     # IMPLEMENT THIS METHOD
+    inv = np.linalg.inv(covmat);
+    det = np.linalg.det(covmat);
+    d= len(covmat);
+    #print(d);
+    #print(inv);
+    #print(det);
+
+    acc=0;
+    ypred= np.zeros(ytest.shape);
     return acc,ypred
 
 def qdaTest(means,covmats,Xtest,ytest):
@@ -110,7 +96,16 @@ def learnOLERegression(X,y):
     # Output: 
     # w = d x 1 
 	
-    # IMPLEMENT THIS METHOD                                                   
+    # IMPLEMENT THIS METHOD 
+    xTranspose = np.matrix.transpose(X)
+
+    first = np.matmul(xTranspose, X)
+
+    sec = np.linalg.matrix_power(first, -1)
+
+    third = np.matmul(sec, xTranspose)
+
+    w = np.matmul(third, y)                                                  
     return w
 
 def learnRidgeRegression(X,y,lambd):
@@ -144,7 +139,7 @@ def testOLERegression(w,Xtest,ytest):
     
     # IMPLEMENT THIS METHOD
     rmse = (np.sum(np.square(np.subtract(ytest,np.dot(Xtest, w)))))/ Xtest.shape[0]
-    print(rmse)
+    #print(rmse)
     return rmse
 
 def regressionObjVal(w, X, y, lambd):
@@ -154,6 +149,20 @@ def regressionObjVal(w, X, y, lambd):
     # lambda                                                                  
 
     # IMPLEMENT THIS METHOD                                             
+    w = np.reshape(w,(w.size,1));
+    #print(w);
+    
+    #J(w) = 1/2 E(yi-w^TXi)^2 + 1/2lambdaE(Wi)^2
+    error = ((1/2)*np.dot((y - np.dot(X,w)).T , y - np.dot(X,w))) + ((1/2)*lambd*np.dot(w.T,w));
+    error = error.flatten();
+    #print(error);
+    first= (-1*np.dot(y.T,X));
+    second= (np.dot(np.dot(w.T,X.T),X));
+    third = (lambd*w.T);
+    error_grad = first+second+third;
+    error_grad = np.reshape(error_grad, ((error_grad.size),1));
+    error_grad = error_grad.flatten();
+    #print(error_grad);
     return error, error_grad
 
 def mapNonLinear(x,p):
@@ -289,7 +298,7 @@ plt.show()
 
 # Problem 5
 pmax = 7
-lambda_opt = 0 # REPLACE THIS WITH lambda_opt estimated from Problem 3
+lambda_opt = 0.06 # REPLACE THIS WITH lambda_opt estimated from Problem 3
 mses5_train = np.zeros((pmax,2))
 mses5 = np.zeros((pmax,2))
 for p in range(pmax):

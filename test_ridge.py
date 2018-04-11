@@ -17,8 +17,27 @@ def testOLERegression(w,Xtest,ytest):
     # mse
 
     rmse = (np.sum(np.square(np.subtract(ytest,np.dot(Xtest, w)))))/ Xtest.shape[0]
-    print(rmse)
+    #print(rmse)
     return rmse
+    
+def learnOLERegression(X,y):
+    # Inputs:                                                         
+    # X = N x d 
+    # y = N x 1                                                               
+    # Output: 
+    # w = d x 1 
+	
+    # IMPLEMENT THIS METHOD 
+    xTranspose = np.matrix.transpose(X)
+
+    first = np.matmul(xTranspose, X)
+
+    sec = np.linalg.matrix_power(first, -1)
+
+    third = np.matmul(sec, xTranspose)
+
+    w = np.matmul(third, y)                                                  
+    return w
 
 def learnRidgeRegression(X,y,lambd):
     # Inputs:
@@ -60,11 +79,18 @@ if sys.version_info.major == 2:
 else:
     X,y,Xtest,ytest = pickle.load(open('diabetes.pickle','rb'),encoding = 'latin1')
 
-
-# lambd = .9
-
+# add intercept
 X_i = np.concatenate((np.ones((X.shape[0],1)), X), axis=1)
 Xtest_i = np.concatenate((np.ones((Xtest.shape[0],1)), Xtest), axis=1)
+
+w = learnOLERegression(X,y)
+mle = testOLERegression(w,Xtest,ytest)
+
+w_i = learnOLERegression(X_i,y)
+mle_i = testOLERegression(w_i,Xtest_i,ytest)
+
+print('MSE without intercept '+str(mle))
+print('MSE with intercept '+str(mle_i))
 
 k = 101
 lambdas = np.linspace(0, 1, num=k)
@@ -76,6 +102,10 @@ for lambd in lambdas:
     mses3_train[i] = testOLERegression(w_l,X_i,y)
     mses3[i] = testOLERegression(w_l,Xtest_i,ytest)
     i = i + 1
+    
+jkl = np.argmin(mses3)
+print(jkl)
+print(mses3[6])
 fig = plt.figure(figsize=[12,6])
 plt.subplot(1, 2, 1)
 plt.plot(lambdas,mses3_train)
